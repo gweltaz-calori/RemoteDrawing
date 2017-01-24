@@ -30,14 +30,14 @@ This will launch the Android App
   - Download  and install [Android Studio]
   - Download and unzip the project
   - In [Android Studio] choose `open an existing Android Studio project`
-  - Open `SocketHelper` class and the `HOST` string to your own node.js server address
+  - Open `SocketHelper` class and edit the `HOST` string to your own node.js server address
   - Run the app module
 
 #### Dependencies
 
 RemoteDrawing requires [Socket.io-Client][Socket.io-Java] Java to run.
 
-Add it as a gradle dependency for Android Studio, in `build.gradle`:
+Gradle dependency for Android Studio, in `build.gradle`:
 
 ```groovy
 compile ('io.socket:socket.io-client:0.8.3') {
