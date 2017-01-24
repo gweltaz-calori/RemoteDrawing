@@ -15,7 +15,8 @@ This will run [node.js] server
   - Navigate to your RemoteDrawingSocket directory with cd command
   - Type `npm install` in that directory
   - Wait till everything is downloaded and installed
-  - Again, go to the command prompt and type `node app.js`. 
+  - (Optional) Again, go to the command prompt and type `npm install socket.io`
+  - Type `node app.js`. 
 
   Verify the deployment by navigating to your server address in your preferred browser.
 
