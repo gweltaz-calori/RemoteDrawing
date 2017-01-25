@@ -66,4 +66,10 @@ public class MainActivity extends Activity implements DrawingActivity {
 
         mSocketHelper.drawOn(MainActivity.this, mDrawingView);
     }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mSocketHelper.disconnect();
+    }
 }

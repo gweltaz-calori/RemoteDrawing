@@ -22,12 +22,9 @@ import io.socket.emitter.Emitter;
  */
 public class SocketHelper {
 
-    private static final String HOST = "http://192.168.1.95:3000";
-
-    private LinkedHashMap<String, String> mUserList;
-
+    private static final String HOST = "http://192.168.1.12:3000";
     private static SocketHelper mInstance = null;
-
+    private LinkedHashMap<String, String> mUserList;
     private Socket mSocket;
 
     private SocketHelper() {
@@ -67,6 +64,12 @@ public class SocketHelper {
             mInstance = new SocketHelper();
         }
         return mInstance;
+    }
+
+    public void disconnect() {
+        mSocket.off();
+        mSocket.disconnect();
+        mInstance = null;
     }
 
     /**
@@ -161,6 +164,10 @@ public class SocketHelper {
      * @return the paint color from user id
      */
     public Paint getPaintColorFromUserId(String userId) {
-        return PaintHelper.createPaintFromRGB(mUserList.get(userId));
+        if (mUserList != null) {
+            return PaintHelper.createPaintFromRGB(mUserList.get(userId));
+        } else {
+            return null;
+        }
     }
 }
