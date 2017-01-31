@@ -164,10 +164,13 @@ public class SocketHelper {
      * @return the paint color from user id
      */
     public Paint getPaintColorFromUserId(String userId) {
-        if (mUserList != null) {
-            return PaintHelper.createPaintFromRGB(mUserList.get(userId));
-        } else {
-            return null;
-        }
+
+        if (mUserList == null) return null;
+
+        String color = mUserList.get(userId);
+
+        if (color == null) return null;
+
+        return PaintHelper.createPaintFromRGB(color);
     }
 }

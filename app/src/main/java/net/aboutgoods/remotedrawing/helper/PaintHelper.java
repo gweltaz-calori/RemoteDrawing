@@ -8,6 +8,8 @@ import android.graphics.Paint;
  */
 public class PaintHelper {
 
+    private static final String TAG = "PaintHelper";
+
     /**
      * Create paint from rgb paint.
      *

@@ -7,6 +7,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -20,6 +21,8 @@ import org.json.JSONObject;
  * The Drawing view.
  */
 public class DrawingView extends View {
+
+    private static final String TAG = "DrawingView";
 
     private static final float TOUCH_TOLERANCE = 4;
     private Bitmap mBitmap;
@@ -123,15 +126,17 @@ public class DrawingView extends View {
      * @param activity the activity
      */
     public void clear(Activity activity) {
-        if(mCanvas != null) {
-            mCanvas.drawColor(Color.parseColor(mBackgroundColor));
-            activity.runOnUiThread(new Runnable() {
+
+        if (mCanvas == null) return;
+
+        mCanvas.drawColor(Color.parseColor(mBackgroundColor));
+        activity.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     invalidate();
                 }
             });
-        }
+
     }
 
     /**
@@ -143,12 +148,15 @@ public class DrawingView extends View {
     public void drawFromJson(JSONObject json, Activity activity) {
         try {
 
+            if (mCanvas == null) return;
+
             JSONObject jsonCoordinates = json.getJSONObject("coordinates");
             String userId = json.getString("drawer");
 
             if (userId != null && !userId.isEmpty()) {
 
                 Paint paint = SocketHelper.getInstance().getPaintColorFromUserId(userId);
+                if (paint == null) return;
 
                 JSONObject jsonOldCoordinate = jsonCoordinates.getJSONObject("old");
                 JSONObject jsonNewCoordinate = jsonCoordinates.getJSONObject("new");
@@ -159,24 +167,21 @@ public class DrawingView extends View {
                 float newX = (float) jsonNewCoordinate.getDouble("x");
                 float newY = (float) jsonNewCoordinate.getDouble("y");
 
-                if (mCanvas != null && paint != null) {
+                Path path = new Path();
+                path.moveTo(oldX, oldY);
+                path.lineTo(newX, newY);
+                mCanvas.drawPath(path, paint);
+                path.reset();
 
-                    Path path = new Path();
-                    path.moveTo(oldX, oldY);
-                    path.lineTo(newX, newY);
-                    mCanvas.drawPath(path, paint);
-                    path.reset();
-
-                    activity.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            invalidate();
-                        }
-                    });
-                }
+                activity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        invalidate();
+                    }
+                });
             }
         } catch (JSONException e) {
-            e.printStackTrace();
+            Log.e(TAG, "drawFromJson: " + e.getMessage());
         }
     }
 }
