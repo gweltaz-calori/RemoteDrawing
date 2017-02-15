@@ -7,10 +7,10 @@ Tout du long de l'ensemble de la réalisation de ses consignes vous devrez comme
 ### 1) Pour débuter
 Histoire de prendre en main les différents projets.
 
-###### Sur Android :
+##### Sur Android :
 - ```Changer la couleur du layout de loading dans le XML```
 
-###### Côté serveur :
+##### Côté serveur :
 - ```Afficher dans la console le nombre de personnes connectés```
 
 ### 2) On commences les choses plus sérieuses :
