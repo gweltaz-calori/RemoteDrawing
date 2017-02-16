@@ -54,9 +54,13 @@ public class MainActivity extends Activity implements DrawingActivity {
             @Override
             public void run()
             {
-                // TODO Alban Création du setter dans DrawingView pour changer de couleur
-
-
+                try{
+                    String myColor = jsonData.getString("color");
+                    Paint myPaint = PaintHelper.createPaintFromRGB(myColor);
+                    mDrawingView.setmLinePaint(myPaint);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
         });
 

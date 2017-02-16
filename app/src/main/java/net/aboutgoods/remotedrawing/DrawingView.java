@@ -184,4 +184,13 @@ public class DrawingView extends View {
             Log.e(TAG, "drawFromJson: " + e.getMessage());
         }
     }
+
+    /**
+     * Set the color of the paint
+     *
+     * @param color the paint color randomly chosen by the server
+     */
+    public void setmLinePaint(Paint color){
+        this.mLinePaint = color;
+    }
 }
