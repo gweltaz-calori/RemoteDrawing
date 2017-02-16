@@ -22,7 +22,7 @@ import io.socket.emitter.Emitter;
  */
 public class SocketHelper {
 
-    private static final String HOST = "http://192.168.1.95:3000";
+    private static final String HOST = "http://192.168.1.46:3000/";
     private static SocketHelper mInstance = null;
     private LinkedHashMap<String, String> mUserList;
     private Socket mSocket;
@@ -148,6 +148,29 @@ public class SocketHelper {
 
         mSocket.on("me", listener);
         mSocket.emit("login", "");
+    }
+
+    /**
+     * On émet un socket afin que le serveur nous renvoi une nouvelle couleur
+     */
+    public void askNewColor(final Activity activity) {
+
+        Emitter.Listener listener = new Emitter.Listener() {
+            @Override
+            public void call(Object... args) {
+
+                JSONObject jsonData = (JSONObject) args[0];
+
+                if(activity instanceof DrawingActivity) {
+                    ((DrawingActivity) activity).onNewColorAsked(jsonData);
+                } else {
+                    throw new StackOverflowError(activity.getLocalClassName() + " must implement DrawingActivity");
+                }
+            }
+        };
+
+        mSocket.on("newColor", listener);  // récéption du socket via un listener (voir interface Drawing activity)
+        mSocket.emit("askColor",""); //emission du socket askColor
     }
 
     /**
