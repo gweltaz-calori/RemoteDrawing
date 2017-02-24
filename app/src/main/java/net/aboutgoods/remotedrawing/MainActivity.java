@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.os.Bundle;
+import android.text.Html;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
@@ -37,6 +38,8 @@ public class MainActivity extends Activity implements DrawingActivity {
             public void run() {
                 try {
                     String myColor = jsonData.getString("color");
+                    Boolean isEraser = jsonData.getBoolean("isEraser");
+                    Toast.makeText(getApplicationContext(),isEraser.toString(),Toast.LENGTH_SHORT).show();
                     Paint myPaint = PaintHelper.createPaintFromRGB(myColor);
                     setupView(myPaint);
                 } catch (JSONException e) {
@@ -56,6 +59,8 @@ public class MainActivity extends Activity implements DrawingActivity {
             {
                 try{
                     String myColor = jsonData.getString("color");
+                    Boolean isEraser = jsonData.getBoolean("isEraser");
+                    Toast.makeText(getApplicationContext(),isEraser.toString(),Toast.LENGTH_SHORT).show();
                     Paint myPaint = PaintHelper.createPaintFromRGB(myColor);
                     mDrawingView.setmLinePaint(myPaint);
                 } catch (JSONException e) {
@@ -74,6 +79,7 @@ public class MainActivity extends Activity implements DrawingActivity {
         mDrawingView = new DrawingView(MainActivity.this, paint);
         relativeLayout.addView(mDrawingView);
 
+        //Ajout du bouton pour clear
         Button button = new Button(MainActivity.this);
         button.setText(getString(R.string.clearAll));
         button.setBackgroundColor(Color.TRANSPARENT);
@@ -101,8 +107,7 @@ public class MainActivity extends Activity implements DrawingActivity {
             }
         });
 
-        //Création d'un linear layout pour les boutons supérieurs
-
+        //Création d'un linear layout pour les boutons supérieurs ("clear for all" et "ask new color")
         LinearLayout linearLayoutTopButtons = new LinearLayout(MainActivity.this); // On instancie le LinearLayout par rapport à notre MainActivity
         linearLayoutTopButtons.setOrientation(LinearLayout.HORIZONTAL); // On choisi l'orientation de notre layout (ici horizontal)
         LinearLayout.LayoutParams linearLayoutTopButtonsLayoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,LinearLayout.LayoutParams.WRAP_CONTENT);// On choisi la hauteur et la largeur
@@ -112,8 +117,39 @@ public class MainActivity extends Activity implements DrawingActivity {
         linearLayoutTopButtons.addView(buttonAskNewColor); // On ajoute le premier bouton au linear layout
 
 
-        // Ajout du layout boutons au Linear layout général
-        relativeLayout.addView(linearLayoutTopButtons);
+        //Ajout du bouton de taille de pinceau
+        Button buttonScaleLinePaint = new Button(MainActivity.this); //On instancie le bouton par rapport à notre MainActivity
+        buttonScaleLinePaint.setText(Html.fromHtml("&#9679;")); // On définit le text par rapport à une string du dossier strings.xml
+        buttonScaleLinePaint.setBackgroundColor(Color.WHITE); // On choisi une couleur de fond transparent
+        buttonScaleLinePaint.setTextColor(Color.BLACK); // Le texte sera blanc
+        buttonScaleLinePaint.setTextSize(24);
+        buttonScaleLinePaint.setPadding(16, 16, 16, 16); // On choisi un padding de 16dp
+        buttonScaleLinePaint.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                //SocketHelper.getInstance().askNewColor(MainActivity.this);
+            }
+        });
+
+        //Ajout du Linear layout pour changer la taille du pinceau
+        LinearLayout linearLayoutButtonScaleLinePaint = new LinearLayout(MainActivity.this); // On instancie le LinearLayout par rapport à notre MainActivity
+        linearLayoutButtonScaleLinePaint.setOrientation(LinearLayout.HORIZONTAL); // On choisi l'orientation de notre layout (ici horizontal)
+        LinearLayout.LayoutParams linearLayoutButtonScaleLinePaintParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,LinearLayout.LayoutParams.WRAP_CONTENT);// On choisi la hauteur et la largeur
+        linearLayoutButtonScaleLinePaint.setLayoutParams(linearLayoutButtonScaleLinePaintParams);
+        linearLayoutButtonScaleLinePaint.setGravity(Gravity.CENTER); // On centre le tout au milieu
+        linearLayoutButtonScaleLinePaint.addView(buttonScaleLinePaint); // On ajoute le premier bouton au linear layout
+
+        //Linear Layout pour le positionnement des menus en haut
+        LinearLayout linearLayoutTopMenus = new LinearLayout(MainActivity.this); // On instancie le LinearLayout par rapport à notre MainActivity
+        linearLayoutTopMenus.setOrientation(LinearLayout.VERTICAL); // On choisi l'orientation de notre layout
+        linearLayoutTopMenus.setLayoutParams(linearLayoutButtonScaleLinePaintParams);
+        linearLayoutTopMenus.setGravity(Gravity.CENTER); // On centre le tout au milieu
+        linearLayoutTopMenus.addView(linearLayoutTopButtons);
+        linearLayoutTopMenus.addView(linearLayoutButtonScaleLinePaint);
+
+        // Ajout du liner layout des menus au Linear layout général
+        relativeLayout.addView(linearLayoutTopMenus);
         setContentView(relativeLayout);
 
         mSocketHelper.drawOn(MainActivity.this, mDrawingView);

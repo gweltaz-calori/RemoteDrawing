@@ -22,7 +22,7 @@ import io.socket.emitter.Emitter;
  */
 public class SocketHelper {
 
-    private static final String HOST = "http://192.168.1.56:3000/";
+    private static final String HOST = "http://192.168.1.92:3000/";
     private static SocketHelper mInstance = null;
     private LinkedHashMap<String, String> mUserList;
     private Socket mSocket;
