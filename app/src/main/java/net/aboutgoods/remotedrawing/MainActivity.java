@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import net.aboutgoods.remotedrawing.helper.PaintHelper;
@@ -22,7 +23,7 @@ public class MainActivity extends Activity implements DrawingActivity {
 
     private SocketHelper mSocketHelper = SocketHelper.getInstance();
     private DrawingView mDrawingView;
-
+    private TextView textViewEraser;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,9 +40,9 @@ public class MainActivity extends Activity implements DrawingActivity {
                 try {
                     String myColor = jsonData.getString("color");
                     Boolean isEraser = jsonData.getBoolean("isEraser");
-                    Toast.makeText(getApplicationContext(),isEraser.toString(),Toast.LENGTH_SHORT).show();
                     Paint myPaint = PaintHelper.createPaintFromRGB(myColor);
                     setupView(myPaint);
+                    setEraserText(isEraser); // On change le text en fonction de si l'utilisateur est eraser ou non
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -60,7 +61,7 @@ public class MainActivity extends Activity implements DrawingActivity {
                 try{
                     String myColor = jsonData.getString("color");
                     Boolean isEraser = jsonData.getBoolean("isEraser");
-                    Toast.makeText(getApplicationContext(),isEraser.toString(),Toast.LENGTH_SHORT).show();
+                    setEraserText(isEraser);// On change le text en fonction de si l'utilisateur est eraser ou non
                     Paint myPaint = PaintHelper.createPaintFromRGB(myColor);
                     mDrawingView.setmLinePaint(myPaint);
                 } catch (JSONException e) {
@@ -132,6 +133,15 @@ public class MainActivity extends Activity implements DrawingActivity {
             }
         });
 
+        //Ajout du textview pour l'eraser
+        textViewEraser = new TextView(MainActivity.this);//On instancie le textview par rapport à notre MainActivity
+        textViewEraser.setText("You are the eraser"); // On définit le texte
+        textViewEraser.setTextColor(Color.WHITE); // Choix de la couleur noire
+        textViewEraser.setTextSize(21); //On choisi la taille de police
+        textViewEraser.setPadding(16, 16, 16, 16);
+
+        textViewEraser.setVisibility(View.INVISIBLE); // On le met invisble au depart
+
         //Ajout du Linear layout pour changer la taille du pinceau
         LinearLayout linearLayoutButtonScaleLinePaint = new LinearLayout(MainActivity.this); // On instancie le LinearLayout par rapport à notre MainActivity
         linearLayoutButtonScaleLinePaint.setOrientation(LinearLayout.HORIZONTAL); // On choisi l'orientation de notre layout (ici horizontal)
@@ -139,6 +149,16 @@ public class MainActivity extends Activity implements DrawingActivity {
         linearLayoutButtonScaleLinePaint.setLayoutParams(linearLayoutButtonScaleLinePaintParams);
         linearLayoutButtonScaleLinePaint.setGravity(Gravity.CENTER); // On centre le tout au milieu
         linearLayoutButtonScaleLinePaint.addView(buttonScaleLinePaint); // On ajoute le premier bouton au linear layout
+
+        //Ajout du Relative layout pour changer les infos eraser
+        RelativeLayout relativeLayoutEraserInfos = new RelativeLayout(MainActivity.this); // On instancie le RelativeLayout par rapport à notre MainActivity
+
+        RelativeLayout.LayoutParams linearLayoutEraserInfosParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,RelativeLayout.LayoutParams.WRAP_CONTENT);// On choisi la hauteur et la largeur
+        linearLayoutEraserInfosParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);//On aligne en bas
+        relativeLayoutEraserInfos.setLayoutParams(linearLayoutEraserInfosParams);
+        relativeLayoutEraserInfos.setGravity(Gravity.CENTER); // On centre le tout au milieu
+
+        relativeLayoutEraserInfos.addView(textViewEraser);//On ajout le textview au layout
 
         //Linear Layout pour le positionnement des menus en haut
         LinearLayout linearLayoutTopMenus = new LinearLayout(MainActivity.this); // On instancie le LinearLayout par rapport à notre MainActivity
@@ -150,6 +170,7 @@ public class MainActivity extends Activity implements DrawingActivity {
 
         // Ajout du liner layout des menus au Linear layout général
         relativeLayout.addView(linearLayoutTopMenus);
+        relativeLayout.addView(relativeLayoutEraserInfos);
         setContentView(relativeLayout);
 
         mSocketHelper.drawOn(MainActivity.this, mDrawingView);
@@ -159,5 +180,12 @@ public class MainActivity extends Activity implements DrawingActivity {
     protected void onDestroy() {
         super.onDestroy();
         mSocketHelper.disconnect();
+    }
+    public void setEraserText(Boolean isEraser)
+    {
+        if(isEraser)
+            textViewEraser.setVisibility(View.VISIBLE); //Visible si il est eraser
+        else
+            textViewEraser.setVisibility(View.INVISIBLE); //Invisible sinon
     }
 }
