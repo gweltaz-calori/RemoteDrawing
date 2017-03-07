@@ -22,7 +22,7 @@ import io.socket.emitter.Emitter;
  */
 public class SocketHelper {
 
-    private static final String HOST = "http://10.7.179.92:3000";
+    private static final String HOST = "http://192.168.1.56:3000";
     private static SocketHelper mInstance = null;
     private LinkedHashMap<String, String> mUserList;
     private Socket mSocket;
@@ -80,7 +80,7 @@ public class SocketHelper {
      * @param newX the new x
      * @param newY the new y
      */
-    public void sendCoordinate(float oldX, float oldY, float newX, float newY) {
+    public void sendCoordinate(float oldX, float oldY, float newX, float newY, float strokeWidth) {
         JSONObject jsonCoordinate = new JSONObject();
 
         try {
@@ -95,7 +95,7 @@ public class SocketHelper {
             jsonCoordinate.put("old", jsonOldCoordinate);
             jsonCoordinate.put("new", jsonNewCoordinate);
 
-            mSocket.emit("drawing", jsonCoordinate);
+            mSocket.emit("drawing", jsonCoordinate,strokeWidth);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -186,7 +186,7 @@ public class SocketHelper {
      * @param userId the user id
      * @return the paint color from user id
      */
-    public Paint getPaintColorFromUserId(String userId) {
+    public Paint getPaintColorFromUserId(String userId, float strokeWidth) {
 
         if (mUserList == null) return null;
 
@@ -194,6 +194,6 @@ public class SocketHelper {
 
         if (color == null) return null;
 
-        return PaintHelper.createPaintFromRGB(color);
+        return PaintHelper.createPaintFromRGB(color, strokeWidth);
     }
 }
