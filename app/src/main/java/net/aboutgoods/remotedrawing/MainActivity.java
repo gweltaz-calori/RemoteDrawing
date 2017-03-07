@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -120,16 +121,18 @@ public class MainActivity extends Activity implements DrawingActivity {
 
         //Ajout du bouton de taille de pinceau
         Button buttonScaleLinePaint = new Button(MainActivity.this); //On instancie le bouton par rapport à notre MainActivity
-        buttonScaleLinePaint.setText(Html.fromHtml("&#9679;")); // On définit le text par rapport à une string du dossier strings.xml
-        buttonScaleLinePaint.setBackgroundColor(Color.WHITE); // On choisi une couleur de fond transparent
-        buttonScaleLinePaint.setTextColor(Color.BLACK); // Le texte sera blanc
-        buttonScaleLinePaint.setTextSize(24);
-        buttonScaleLinePaint.setPadding(16, 16, 16, 16); // On choisi un padding de 16dp
+        buttonScaleLinePaint.setWidth(61);
+        buttonScaleLinePaint.setHeight(61);
+        buttonScaleLinePaint.setTextSize(40);
+        buttonScaleLinePaint.setText(Html.fromHtml("&#9679;"));
+        buttonScaleLinePaint.setBackgroundColor(Color.WHITE);
+        buttonScaleLinePaint.getBackground().setAlpha(128);
+        buttonScaleLinePaint.setTextColor(Color.BLACK);
         buttonScaleLinePaint.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 //SocketHelper.getInstance().askNewColor(MainActivity.this);
+                mDrawingView.getmLinePaint().setStrokeWidth(45);
             }
         });
 

@@ -32,6 +32,11 @@ public class DrawingView extends View {
     private Context mContext;
     private Paint mLinePaint;
     private Path mCirclePath;
+
+    public Paint getmLinePaint() {
+        return mLinePaint;
+    }
+
     private String mBackgroundColor = "#424242";
     private float mX, mY;
 
@@ -64,7 +69,7 @@ public class DrawingView extends View {
         super.onDraw(canvas);
 
         canvas.drawBitmap(mBitmap, 0, 0, mBitmapPaint);
-        canvas.drawPath(mPath, PaintHelper.getBluePrintPaint());
+        canvas.drawPath(mPath, PaintHelper.getBluePrintPaint(mLinePaint.getStrokeWidth()));
         canvas.drawPath(mCirclePath, PaintHelper.getCirclePaint());
     }
 

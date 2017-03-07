@@ -48,13 +48,13 @@ public class PaintHelper {
      *
      * @return the blueprint paint
      */
-    public static Paint getBluePrintPaint() {
+    public static Paint getBluePrintPaint(float strokeWidth) {
         Paint paint = new Paint();
         paint.setAntiAlias(true);
         paint.setColor(Color.BLUE);
         paint.setStyle(Paint.Style.STROKE);
         paint.setStrokeJoin(Paint.Join.MITER);
-        paint.setStrokeWidth(8);
+        paint.setStrokeWidth(strokeWidth);
         return paint;
     }
 }
