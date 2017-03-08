@@ -2,6 +2,7 @@ package net.aboutgoods.remotedrawing.helper;
 
 import android.app.Activity;
 import android.graphics.Paint;
+import android.widget.Toast;
 
 import net.aboutgoods.remotedrawing.DrawingActivity;
 import net.aboutgoods.remotedrawing.DrawingView;
@@ -22,7 +23,7 @@ import io.socket.emitter.Emitter;
  */
 public class SocketHelper {
 
-    private static final String HOST = "http://192.168.1.56:3000";
+    private static final String HOST = "http://10.7.182.109:3000";
     private static SocketHelper mInstance = null;
     private LinkedHashMap<String, String> mUserList;
     private Socket mSocket;
