@@ -3,4 +3,7 @@
     <string name="loading">Loading...</string>
     <string name="clearAll">Clear for all</string>
     <string name="askNewColor">Ask new color</string>
+    <string name="browseChannels">Browse Channels</string>
+    <string name="channelName">Room name</string>
+    <string name="connectedMessage">You are connected to room </string>
 </resources>

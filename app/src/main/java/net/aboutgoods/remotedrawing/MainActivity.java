@@ -1,13 +1,23 @@
 package net.aboutgoods.remotedrawing;
 
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.os.Bundle;
+import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.Snackbar;
+import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.view.Gravity;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
@@ -20,35 +30,36 @@ import net.aboutgoods.remotedrawing.helper.SocketHelper;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class MainActivity extends Activity implements DrawingActivity {
+public class MainActivity extends AppCompatActivity implements DrawingActivity {
 
     private SocketHelper mSocketHelper = SocketHelper.getInstance();
     private DrawingView mDrawingView;
     private TextView textViewEraser;
+    private RelativeLayout relativeLayout;
+    private EditText editTextRoomName;
+    private boolean dialogAppStarted = false; // Afin de permettre a l'utilisateur de faire disparaitre la dialog une fois dans une room
+    private AlertDialog dialogChooseRoom;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        getSupportActionBar().hide();
         SocketHelper.getInstance().login(MainActivity.this);
 
     }
 
+    //Dans le cas ou l'utilisateur est loggé
     @Override
-    public void onLogin(final JSONObject jsonData) {
+    public void onLogin()
+    {
         MainActivity.this.runOnUiThread(new Runnable() {
             @Override
-            public void run() {
-                try {
-                    String myColor = jsonData.getString("color");
-                    Boolean isEraser = jsonData.getBoolean("isEraser");
-                    Paint myPaint = PaintHelper.createPaintFromRGB(myColor);
-                    setupView(myPaint);
-                    setEraserText(isEraser); // On change le text en fonction de si l'utilisateur est eraser ou non
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+            public void run()
+            {
+                showRoomSelectionDialog(); //On lui affiche la dialog avec choix du serveur
             }
         });
+
     }
 
     // Dans le cas ou une nouvelle couleur à été renvoyé par le serveur on fera le traitement nécéssaire avec celle ci (la signature onNewColorAsked est dans l'interface drawing activity)
@@ -72,11 +83,38 @@ public class MainActivity extends Activity implements DrawingActivity {
         });
 
     }
+    //Dans le cas ou l'utilisaeur a join la room demandée
+    @Override
+    public void onRoomJoined(final JSONObject jsonData) {
+        MainActivity.this.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    dialogChooseRoom.dismiss();
+                    String myColor = jsonData.getString("color");
+                    Boolean isEraser = jsonData.getBoolean("isEraser");
+                    Paint myPaint = PaintHelper.createPaintFromRGB(myColor);
+                    setupView(myPaint);
+                    setEraserText(isEraser); // On change le text en fonction de si l'utilisateur est eraser ou non
+                    Snackbar mySnackbar = Snackbar.make(relativeLayout,
+                            getResources().getString(R.string.connectedMessage)+" "+editTextRoomName.getText().toString(), Snackbar.LENGTH_SHORT);
+                    mySnackbar.show();
+                    setTitle("#"+editTextRoomName.getText().toString());
+                    dialogAppStarted = true;
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
 
-    private void setupView(Paint paint) {
-        RelativeLayout relativeLayout = new RelativeLayout(MainActivity.this);
+    private void setupView(Paint paint)
+    {
+        getSupportActionBar().show();
+        relativeLayout = new RelativeLayout(MainActivity.this);
         RelativeLayout.LayoutParams relativeLayoutParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,RelativeLayout.LayoutParams.MATCH_PARENT);
         relativeLayout.setLayoutParams(relativeLayoutParams);
+
 
         mDrawingView = new DrawingView(MainActivity.this, paint);
         relativeLayout.addView(mDrawingView);
@@ -121,8 +159,7 @@ public class MainActivity extends Activity implements DrawingActivity {
 
         //Ajout du bouton de taille de pinceau
         Button buttonScaleLinePaint = new Button(MainActivity.this); //On instancie le bouton par rapport à notre MainActivity
-        buttonScaleLinePaint.setWidth(61);
-        buttonScaleLinePaint.setHeight(61);
+        buttonScaleLinePaint.setLayoutParams(new LinearLayout.LayoutParams(221, 221));
         buttonScaleLinePaint.setTextSize(40);
         buttonScaleLinePaint.setText(Html.fromHtml("&#9679;"));
         buttonScaleLinePaint.setBackgroundColor(Color.WHITE);
@@ -190,5 +227,74 @@ public class MainActivity extends Activity implements DrawingActivity {
             textViewEraser.setVisibility(View.VISIBLE); //Visible si il est eraser
         else
             textViewEraser.setVisibility(View.INVISIBLE); //Invisible sinon
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.app_bar_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.browse_channels:
+
+
+                showRoomSelectionDialog();
+                return true;
+
+
+            default:
+                // If we got here, the user's action was not recognized.
+                // Invoke the superclass to handle it.
+                return super.onOptionsItemSelected(item);
+
+        }
+    }
+    public void showRoomSelectionDialog() // Methode permettant d'afficher la dialog pour se connecter à une room
+    {
+
+        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
+        LayoutInflater inflater = this.getLayoutInflater();
+        View dialogView = inflater.inflate(R.layout.dialog, null); //Depuis mon layout custom
+        dialogBuilder.setView(dialogView);
+        dialogBuilder.setCancelable(false);
+        editTextRoomName = (EditText) dialogView.findViewById(R.id.editTextRoomName);
+        dialogBuilder.setTitle("Choose a channel");
+        dialogBuilder.setPositiveButton(android.R.string.ok, null)
+                .setNegativeButton(android.R.string.cancel, null);
+        dialogChooseRoom = dialogBuilder.create();
+        dialogChooseRoom.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(final DialogInterface dialog) {
+                Button buttonPositive = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_POSITIVE);
+                buttonPositive.setText("Join");
+                buttonPositive.setOnClickListener(new View.OnClickListener() { //Click sur le bouton JOIN
+
+                    @Override
+                    public void onClick(View view)
+                    {
+                        if(editTextRoomName.getText().toString().length()>0)
+                            mSocketHelper.joinRoom(MainActivity.this,editTextRoomName.getText().toString()); //On demande a join la room demandée
+                    }
+                });
+                Button buttonNegative = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_NEGATIVE);
+                buttonNegative.setText("Cancel");
+                if(dialogAppStarted) //On doit empecher la dialog de se fermer avec le bouton cancel si c'est la premiere fois qu'elle se lance
+                    buttonNegative.setEnabled(true);
+                else
+                    buttonNegative.setEnabled(false);
+                buttonNegative.setOnClickListener(new View.OnClickListener() { //Click sur le bouton Cancel
+
+                    @Override
+                    public void onClick(View view) {
+
+                        dialog.dismiss();
+                    }
+                });
+            }
+        });
+        dialogChooseRoom.show();
     }
 }

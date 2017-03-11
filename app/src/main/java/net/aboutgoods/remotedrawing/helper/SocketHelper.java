@@ -22,7 +22,7 @@ import io.socket.emitter.Emitter;
  */
 public class SocketHelper {
 
-    private static final String HOST = "http://10.7.179.92:3000";
+    private static final String HOST = "http://192.168.1.100:8086";
     private static SocketHelper mInstance = null;
     private LinkedHashMap<String, String> mUserList;
     private Socket mSocket;
@@ -136,17 +136,16 @@ public class SocketHelper {
             @Override
             public void call(Object... args) {
 
-                JSONObject jsonData = (JSONObject) args[0];
+
 
                 if(activity instanceof DrawingActivity) {
-                    ((DrawingActivity) activity).onLogin(jsonData);
+                    ((DrawingActivity) activity).onLogin();
                 } else {
                     throw new StackOverflowError(activity.getLocalClassName() + " must implement DrawingActivity");
                 }
             }
         };
-
-        mSocket.on("me", listener);
+        mSocket.on("login",listener);
         mSocket.emit("login", "");
     }
 
@@ -172,7 +171,30 @@ public class SocketHelper {
         mSocket.on("newColor", listener);  // récéption du socket via un listener (voir interface Drawing activity)
         mSocket.emit("askColor",""); //emission du socket askColor
     }
+    /*
+    *
+    * On join la room
+    *
+    * */
+    public void joinRoom(final Activity activity,String roomName) {
 
+        Emitter.Listener listener = new Emitter.Listener() {
+            @Override
+            public void call(Object... args) {
+
+                JSONObject jsonData = (JSONObject) args[0];
+
+                if(activity instanceof DrawingActivity) {
+                    ((DrawingActivity) activity).onRoomJoined(jsonData);
+                } else {
+                    throw new StackOverflowError(activity.getLocalClassName() + " must implement DrawingActivity");
+                }
+            }
+        };
+
+        mSocket.on("me", listener);;  // récéption du socket via un listener (voir interface Drawing activity)
+        mSocket.emit("joinRoom",roomName); //emission du socket askColor
+    }
     /**
      * Clear drawing surface.
      */
