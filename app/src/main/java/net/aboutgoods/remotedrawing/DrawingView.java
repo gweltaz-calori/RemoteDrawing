@@ -84,7 +84,7 @@ public class DrawingView extends View {
         float dx = Math.abs(x - mX);
         float dy = Math.abs(y - mY);
         if (dx >= TOUCH_TOLERANCE || dy >= TOUCH_TOLERANCE) {
-            SocketHelper.getInstance().sendCoordinate(mX, mY, x, y);
+            SocketHelper.getInstance().sendCoordinate(mX, mY, x, y, mLinePaint.getStrokeWidth());
             mPath.quadTo(mX, mY, (x + mX)/2, (y + mY)/2);
             mX = x;
             mY = y;
@@ -160,7 +160,7 @@ public class DrawingView extends View {
 
             if (userId != null && !userId.isEmpty()) {
 
-                Paint paint = SocketHelper.getInstance().getPaintColorFromUserId(userId);
+                Paint paint = SocketHelper.getInstance().getPaintColorFromUserId(userId, Float.valueOf(json.getString("strokeWidth")));
                 if (paint == null) return;
 
                 JSONObject jsonOldCoordinate = jsonCoordinates.getJSONObject("old");

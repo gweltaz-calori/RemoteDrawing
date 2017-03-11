@@ -16,7 +16,7 @@ public class PaintHelper {
      * @param rgb the rgb
      * @return the paint
      */
-    public static Paint createPaintFromRGB(String rgb) {
+    public static Paint createPaintFromRGB(String rgb, float strokeWidth) {
         Paint paint = new Paint();
         paint.setAntiAlias(true);
         paint.setDither(true);
@@ -24,7 +24,7 @@ public class PaintHelper {
         paint.setStyle(Paint.Style.STROKE);
         paint.setStrokeJoin(Paint.Join.ROUND);
         paint.setStrokeCap(Paint.Cap.ROUND);
-        paint.setStrokeWidth(12);
+        paint.setStrokeWidth(strokeWidth);
         return paint;
     }
 
