@@ -74,7 +74,7 @@ public class MainActivity extends AppCompatActivity implements DrawingActivity {
                     String myColor = jsonData.getString("color");
                     Boolean isEraser = jsonData.getBoolean("isEraser");
                     setEraserText(isEraser);// On change le text en fonction de si l'utilisateur est eraser ou non
-                    Paint myPaint = PaintHelper.createPaintFromRGB(myColor);
+                    Paint myPaint = PaintHelper.createPaintFromRGB(myColor,mDrawingView.getmLinePaint().getStrokeWidth());
                     mDrawingView.setmLinePaint(myPaint);
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -93,7 +93,7 @@ public class MainActivity extends AppCompatActivity implements DrawingActivity {
                     dialogChooseRoom.dismiss();
                     String myColor = jsonData.getString("color");
                     Boolean isEraser = jsonData.getBoolean("isEraser");
-                    Paint myPaint = PaintHelper.createPaintFromRGB(myColor);
+                    Paint myPaint = PaintHelper.createPaintFromRGB(myColor,12);
                     setupView(myPaint);
                     setEraserText(isEraser); // On change le text en fonction de si l'utilisateur est eraser ou non
                     Snackbar mySnackbar = Snackbar.make(relativeLayout,
