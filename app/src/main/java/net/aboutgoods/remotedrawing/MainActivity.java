@@ -108,6 +108,12 @@ public class MainActivity extends AppCompatActivity implements DrawingActivity {
         });
     }
 
+    /*
+    public void onNotificationReceivedFromServer(String notification){
+        Snackbar mySnackbar = Snackbar.make(relativeLayout, notification, Snackbar.LENGTH_SHORT);
+        mySnackbar.show();
+    }*/
+
     private void setupView(Paint paint)
     {
         getSupportActionBar().show();
@@ -158,6 +164,7 @@ public class MainActivity extends AppCompatActivity implements DrawingActivity {
 
 
         //Ajout du bouton de taille de pinceau
+        /*
         Button buttonScaleLinePaint = new Button(MainActivity.this); //On instancie le bouton par rapport à notre MainActivity
         buttonScaleLinePaint.setLayoutParams(new LinearLayout.LayoutParams(221, 221));
         buttonScaleLinePaint.setTextSize(40);
@@ -168,8 +175,28 @@ public class MainActivity extends AppCompatActivity implements DrawingActivity {
         buttonScaleLinePaint.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //SocketHelper.getInstance().askNewColor(MainActivity.this);
-                mDrawingView.getmLinePaint().setStrokeWidth(45);
+                //mDrawingView.getmLinePaint().setStrokeWidth(45);
+            }
+        });*/
+
+        SeekBar seekBarScaleLinePaint = new SeekBar(MainActivity.this);
+        seekBarScaleLinePaint.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,LinearLayout.LayoutParams.WRAP_CONTENT));
+        seekBarScaleLinePaint.setProgress(0);
+        //seekBarScaleLinePaint.setSecondaryProgress(20);
+        seekBarScaleLinePaint.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                mDrawingView.getmLinePaint().setStrokeWidth(progress + 12);
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
             }
         });
 
@@ -188,7 +215,8 @@ public class MainActivity extends AppCompatActivity implements DrawingActivity {
         LinearLayout.LayoutParams linearLayoutButtonScaleLinePaintParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,LinearLayout.LayoutParams.WRAP_CONTENT);// On choisi la hauteur et la largeur
         linearLayoutButtonScaleLinePaint.setLayoutParams(linearLayoutButtonScaleLinePaintParams);
         linearLayoutButtonScaleLinePaint.setGravity(Gravity.CENTER); // On centre le tout au milieu
-        linearLayoutButtonScaleLinePaint.addView(buttonScaleLinePaint); // On ajoute le premier bouton au linear layout
+        //linearLayoutButtonScaleLinePaint.addView(buttonScaleLinePaint); // On ajoute le premier bouton au linear layout
+        linearLayoutButtonScaleLinePaint.addView(seekBarScaleLinePaint);
 
         //Ajout du Relative layout pour changer les infos eraser
         RelativeLayout relativeLayoutEraserInfos = new RelativeLayout(MainActivity.this); // On instancie le RelativeLayout par rapport à notre MainActivity

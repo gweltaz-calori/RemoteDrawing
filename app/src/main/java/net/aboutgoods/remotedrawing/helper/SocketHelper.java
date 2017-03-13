@@ -22,7 +22,7 @@ import io.socket.emitter.Emitter;
  */
 public class SocketHelper {
 
-    private static final String HOST = "http://192.168.1.100:8086";
+    private static final String HOST = "http://192.168.1.56:3000";
     private static SocketHelper mInstance = null;
     private LinkedHashMap<String, String> mUserList;
     private Socket mSocket;
@@ -195,6 +195,31 @@ public class SocketHelper {
         mSocket.on("me", listener);;  // récéption du socket via un listener (voir interface Drawing activity)
         mSocket.emit("joinRoom",roomName); //emission du socket askColor
     }
+
+    /*
+    *
+    * Quand on reçoit une notification du server (user joined or left room...)
+    *
+    * */
+    /*
+    public void getNotificationFromServer(final Activity activity){
+        Emitter.Listener listener = new Emitter.Listener() {
+            @Override
+            public void call(Object... args) {
+                if(activity instanceof DrawingActivity) {
+                    ((DrawingActivity) activity).onNotificationReceivedFromServer((String) args[0]);
+                } else {
+                    throw new StackOverflowError(activity.getLocalClassName() + " must implement DrawingActivity");
+                }
+            }
+        };
+
+        // récéption des sockets
+        mSocket.on("userLeftRoom", listener);;
+        mSocket.on("userJoinedRoom", listener);;
+    }*/
+
+
     /**
      * Clear drawing surface.
      */
